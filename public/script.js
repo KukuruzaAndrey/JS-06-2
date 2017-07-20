@@ -7,18 +7,14 @@ const userInputEl = document.querySelector('#user-input');
 const messagesListEl = document.querySelector('#messages-list');
 const typingUsersEl = document.querySelector('#typing');
 
-const xmlHTTP_1 = new XMLHttpRequest();
-const xmlHTTP_2 = new XMLHttpRequest();
-const xmlHTTP_3 = new XMLHttpRequest();
-const xmlHTTP_4 = new XMLHttpRequest();
-
-const ajaxRequest = ({xmlHTTP = new XMLHttpRequest(), url = '/', method = 'GET', data = {}, callback = (function () {})}) => {
+const ajaxRequest = ({url = '/', method = 'GET', data = {}, callback = (function () {})}) => {
+    const xmlHTTP = new XMLHttpRequest();
     xmlHTTP.open(method, url, true);
     xmlHTTP.setRequestHeader('Content-type', 'application/json');
     xmlHTTP.send(JSON.stringify(data));
     xmlHTTP.onreadystatechange = () => {
         if (xmlHTTP.status === 200 && xmlHTTP.readyState === 4) {
-            callback(JSON.parse(xmlHTTP.responseText));
+            callback(xmlHTTP.responseText);
         }
     };
 };
@@ -43,7 +39,6 @@ okButtonEl.onclick = () => {
     const d = new Date();
     const user = {name: userName, nick: userNick, date: `${d.getHours()}:${d.getMinutes()}`};
     ajaxRequest({
-        xmlHTTP:xmlHTTP_1,
         url: '/user',
         method: 'POST',
         data: user
@@ -94,10 +89,10 @@ const addMsg = ({name, nick, date, payload}) => {
 };
 setInterval(() => {
     ajaxRequest({
-        xmlHTTP: xmlHTTP_2,
         url: '/msg',
         method: 'GET',
         callback: (messages) => {
+            messages = JSON.parse(messages);
             while (messagesListEl.firstChild) {
                 messagesListEl.removeChild(messagesListEl.firstChild);
             }
@@ -108,17 +103,17 @@ setInterval(() => {
 setTimeout(() => {
     setInterval(() => {
         ajaxRequest({
-            xmlHTTP: xmlHTTP_3,
             url: '/user',
             method: 'GET',
             callback: (users) => {
+                users =JSON.parse(users);
                 while (usersListEl.firstChild) {
                     usersListEl.removeChild(usersListEl.firstChild);
                 }
                 users.forEach(user => addUser(user));
             }
         });
-    }, 2000);
+    }, 1000);
 }, 500);
 
 
@@ -134,7 +129,6 @@ const sendMessage = () => {
         payload: userInputEl.value
     };
     ajaxRequest({
-        xmlHTTP: xmlHTTP_4,
         url: '/msg',
         method: 'POST',
         data: msg
