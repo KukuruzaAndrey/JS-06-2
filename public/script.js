@@ -106,7 +106,7 @@ setTimeout(() => {
             url: '/user',
             method: 'GET',
             callback: (users) => {
-                users =JSON.parse(users);
+                users = JSON.parse(users);
                 while (usersListEl.firstChild) {
                     usersListEl.removeChild(usersListEl.firstChild);
                 }

@@ -1,4 +1,4 @@
-users = [];
+const users = [];
 
 exports.create = (user) => {
     users.push(user);
